@@ -115,6 +115,38 @@ class TodoList {
     return filteredTodos;
   }
 
+  findByTitle(title) {
+    return this.filter((todo) => todo.getTitle() === title).first();
+  }
+
+  allDone() {
+    return this.filter((todo) => todo.isDone());
+  }
+
+  allNotDone() {
+    return this.filter((todo) => !todo.isDone());
+  }
+
+  markDone(title) {
+    let searchResult = this.findByTitle(title);
+
+    if (searchResult) {
+      searchResult.markDone();
+    }
+  }
+
+  markAllDone() {
+    this.forEach((todo) => todo.markDone());
+  }
+
+  markAllUndone() {
+    this.forEach((todo) => todo.markUndone());
+  }
+
+  toArray() {
+    return this.todos.slice();
+  }
+
   _validateIndex(index) {
     if (!(index in this.todos)) {
       throw new ReferenceError(`invalid index: ${index}`);
@@ -143,3 +175,28 @@ let doneTodos = list.filter(todo => todo.isDone());
 console.log(doneTodos);
 
 console.log(list.filter(todo => todo.isDone()).first());
+
+console.log(list.findByTitle("Feed the cats")); // Todo { title: "Feed the cats", done: true }
+console.log(list.findByTitle("touch grass")); // undefined
+
+list.add(new Todo("Feed the cats"));
+
+console.log(list.findByTitle("Feed the cats")); // Todo { title: "Feed the cats", done: true }
+
+console.log(list.allDone());
+console.log(list.allNotDone());
+
+list.markDone("Clean room");
+console.log(list.findByTitle("Clean room"));
+
+list.markDone("touch grass");
+console.log(list);
+
+list.markAllDone();
+console.log(list);
+
+list.markAllUndone();
+console.log(list);
+
+console.log(list.toArray());
+console.log(list.toArray() === list.todos); // false, returns a copy
