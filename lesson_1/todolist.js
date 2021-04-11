@@ -103,6 +103,18 @@ class TodoList {
     this.todos.forEach(callback);
   }
 
+  filter(callback) {
+    let filteredTodos = new TodoList(this.title);
+
+    this.forEach((todo) => {
+      if (callback(todo)) {
+        filteredTodos.add(todo);
+      }
+    });
+
+    return filteredTodos;
+  }
+
   _validateIndex(index) {
     if (!(index in this.todos)) {
       throw new ReferenceError(`invalid index: ${index}`);
@@ -118,11 +130,16 @@ let todo5 = new Todo("Feed the cats");
 let todo6 = new Todo("Study for Launch School");
 let list = new TodoList("Today's Todos");
 
-list.add(todo1);
-list.add(todo2);
-list.add(todo3);
-list.add(todo4);
-list.add(todo5);
-list.add(todo6);
+list.add(todo1)
+list.add(todo2)
+list.add(todo3)
+list.add(todo4)
+list.add(todo5)
+list.add(todo6)
+todo1.markDone();
+todo5.markDone();
 
-list.forEach(todo => console.log(todo.toString()));
+let doneTodos = list.filter(todo => todo.isDone());
+console.log(doneTodos);
+
+console.log(list.filter(todo => todo.isDone()).first());
