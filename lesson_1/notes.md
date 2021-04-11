@@ -1,0 +1,2 @@
+- on exceptions: one situation where it may be appropriate to use them when otherwise it wouldn't (ex/on bad inputs) is when the code might be part of a module used by other programs - then we may not have control over what those programs do
+- convention: private methods (shouldn't be used outside of the class) have names starting with an underscore `_`
