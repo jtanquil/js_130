@@ -8,7 +8,7 @@
     - **`var` vs `let`**:
         - 1) variables declared with `var` at the top level of a program adds that variable as a property on the global object, variables declared with `let` or `const` don't:
         ```javascript
-        // in the node repl
+        // in the node repl; acts differently in node
         let foo = 1;
         const bar = 2;
         var qux = 3;

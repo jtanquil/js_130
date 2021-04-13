@@ -1,2 +1,5 @@
-console.log(new Test());
-class Test{}
+"use strict";
+
+console.log(global);
+
+a = 1;
