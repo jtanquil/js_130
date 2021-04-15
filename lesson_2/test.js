@@ -1,40 +1,16 @@
-"use strict";
-
-function makeList() {
-  let listItems = [];
+function test(...args) {
+  let [ first, ...rest ] = args;
+  let [ last, ...middle ] = rest.reverse();
 
   return {
-    add(listItem) {
-      listItems.push(listItem);
-      console.log(`${listItem} added!`);
-    },
-
-    remove(listItem) {
-      listItems.splice(listItems.indexOf(listItem), 1);
-      console.log(`${listItem} removed!`);
-    },
-
-    list() {
-      if (listItems.length === 0) {
-        console.log("The list is empty.");
-      } else {
-        listItems.forEach((item) => console.log(item));
-      }
-    }
+    first,
+    last,
+    middle: middle.sort(),
   };
 }
 
-let list = makeList();
-list.add("peas");
-console.log("");
-list.list();
-console.log("");
-list.add("corn");
-console.log("");
-list.list();
-console.log("");
-list.remove("peas");
-console.log("");
-list.list();
-
-console.log(list.listItems); // undefined <= listItems only accessible through list methods via closure!
+let hello = ["h", "e", "l", "l", "o"];
+let { first, last, middle } = test(...hello);
+console.log(first);
+console.log(last);
+console.log(middle);

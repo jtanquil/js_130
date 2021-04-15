@@ -54,7 +54,7 @@ function makeList() {
 
 ## More Practice Problems ##
 
-1. Even though `makeList` returns an object with methods instead of a function, these methods are still function definitions, so via closure, they have access to variables in their surrounding scope, in particular `listItems`, just as the function returned by `makeList` in the previous problem did.
+2. Even though `makeList` returns an object with methods instead of a function, these methods are still function definitions, so via closure, they have access to variables in their surrounding scope, in particular `listItems`, just as the function returned by `makeList` in the previous problem did.
 
 ```javascript
 function makeList() {
