@@ -40,7 +40,7 @@ let Account = {
 
     this.displayName = generateDisplayName();
 
-    Object.assign(Account, {
+    Object.assign(this, {
       firstName(inputPassword) {
         return checkForPassword(() => firstName, inputPassword);
       },

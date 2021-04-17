@@ -216,3 +216,12 @@
 
     test(1, 2, 3, 4, 5, 6);
     ```
+
+- examples
+    ```javascript
+    // creates a copy of array, stores it in newArr
+    let array = [1, 2, 3];
+    let [ ...newArr ] = array;
+
+    console.log(newArr); // [1, 2, 3]
+    ```

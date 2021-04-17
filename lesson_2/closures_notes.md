@@ -73,6 +73,7 @@
     ```
       - the callback's definition creates a closure containing the variables in the scope defined by the callback (`number`), and the top-level variables `array` and `evens`, allowing the callback to access `evens` when it is invoked during the invocation of `forEach`
     - **partial function application**: a pattern where one function takes multiple arguments, and another function applies some of those arguments by returning a function that invokes the first function passing some of the arguments:
+        - refers to the creation of a function that can call a second function with fewer arguments than the second function expects
     ```javascript
     function add(first, second) {
       return first + second;
@@ -96,6 +97,18 @@
       - note that when `addFive` retrieves the value of `firstArg` during invocation, the value it retrieves is `5`; similarly, `addTen` retrieves the value `10` during invocation. This shows that `addFive` and `addTen` are accessing different variables, because their associated closures are different (TODO: explain this while retaining the character of closures as a lexical property)
       - this technique is useful when dealing with a function that accepts a callback whose signature is different from the signature of the callback you would actually want to use (useful if you need to use this callback several times, in different contexts)
       - `Function.prototype.bind` is an example of partial function application - it takes optional arguments that specify some of the function's arguments when invoking `bind`; the permanently binding to a context can also be considered an "argument" that is applied with partial function application
+      - TODO: pre-binding (returning a function where the first value is hard-coded instead of an argument passed to the first function)
+      ```javascript
+      function add(a, b) {
+        return a + b;
+      }
+
+      function test() {
+        return function(second) {
+          return add(3, second);
+        }
+      }
+      ```
 - **closures and private data**: one of the most powerful uses of closures is creating private data in variables declared inside a function, and only accessible via closure through a public interface returned by the function (either another function, an object with methods that can access those private variables via closure, etc)
     - **why**: enforce access of data to provided methods, prevents other users from becoming dependent on an implementation
         - example: a `list` object might be implemented as a array, kept private in a function, with a public interface (to add/remove/see items in the list, etc) provided by functions that can access `list` via closure. The implementation of `list` may change to some other object, but if the usage of the public API (add/remove/see methods) remains the same, then it won't matter to people who use the list - it would though if they were directly accessing `list`
@@ -115,4 +128,5 @@
       };
     }
     ```
-      - encryption is the only reasonably safe way to protect such data
+      - encryption is the only reasonably safe way to protect such data; **privacy is not security**
+          - modern debuggers can step through programs and inspect variables, exposing private data

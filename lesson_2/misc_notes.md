@@ -1,90 +1,159 @@
 ## JS 130 - Misc Notes ##
 
-- questions: 
-  - **hoisting**: how to talk about hoisting (what is being hoisted - class/`let`/`const` names vs `var` names + init vs function declarations), (function declaration vs definition, initialization), hoisting as a mental model vs what's actually happening 
-  - **closures**: how to talk about closures? closure of a function? 
-  - **IIFE**: scope created by the IIFE? what is this compared to function/block scope? named function declarations in an IIFE - how do they work? problem 1 - throws a different error?
-
-  - study session notes
-    - **exam**: one longer question with coding, interview similar to JS 109, do exercises
-
-- "Advanced Concepts":
-  - "hoisting"
-    - What is hoisting?
-        - general definition: mental model that conceptualizes how during the creation phase, JS variable/function/class declarations are "hoisted" to the top of their respective function/block scopes
-    - How do var, let, and const interact with hoisting? How do they differ?
-        - `let` and `const` interact with hoisting the same way: hoisted to the top of their blocks, cannot be accessed before initialization (no value, not even `undefined` - **Temporal Dead Zone**)
-        - `var` variables are hoisted to the top of their function, can be accessed before initialization (evaluates to `undefined`)
+- **modules**
+    - issues with large single-file programs: unwieldy, difficult to understand and work with, issues with encapsulation/private data
+    - solution: splitting up a program into multiple files, called **modules**
+    - **CommonJS modules**
+        - also known as Node modules
+        - we've already used them when getting user input: `require('readline-sync')` **imports** code into our program
+        - **CommonJS module syntax**: import the module using the `require` function (may require installing the module with npm)
+        - **creating CommonJS modules**:
         ```javascript
-        var foo = 10;
-
-        function bar() {
-          if (foo > 20) {
-            // let foo = 50;
-            var foo = 50;
-          }
-
-          console.log(foo);
-          foo += 10;
+        // in export.js
+        function test() {
+          console.log("hi");
         }
 
-        bar();
-        bar();
-        bar();
+        module.exports = test;
         ```
-    - How do functions and classes interact with hoisting? How do they differ?
-        - function declarations are hoisted to the top of their function scope (the whole declaration, so they can be invoked before they are defined in the code)
-        - class declarations: act like `let` or `const`, also subject to Temporal Dead Zone
         ```javascript
-        let user = new User("hi"); // throws ReferenceError: cannot access User before initialization
+        // in import.js
+        const test = require("./export"); // relative path to the file from which to import code
+        test(); // hi
+        ```
+        - in `export.js`, the last line adds the `test` function to the code that the module can export to other programs, and in `import.js`, that code is imported into the program using `require`.
+        - `require` takes a path (relative to the current file) to the file containing the module; if requiring from a package installed with npm this isn't necessary
+        - any value can be exported - functions, constants, variables, classes
+        - multiple items can be exported:
+        ```javascript
+        // export.js
+        let testVar = "hello";
 
-        class User {
-          constructor(name) {
-            this.name = name;
-          }
+        function test1() {
+          console.log(testVar);
+        };
+
+        let testVar = "hello";
+
+        function setTestVar(newTestVar) {
+          testVar = newTestVar;
+        }
+
+        module.exports = {
+          test1,
+          setTestVar,
+        };
+        ```
+        ```javascript
+        // import.js
+        const { test1, setTestVar } = require("./export");
+        test1(); // hello
+        setTestVar("hi there");
+        test1(); // hi there
+        ```
+        - in this example, `require("./export")` returns the object assigned to `module.exports` in `export.js` and the variables `test1` and `setTestVar` are assigned to the properties of that object with the object destructuring syntax
+        - **CommonJS variables**
+            - in Node, all code is part of a CommonJS module; in particular each program is part of one
+            - each module has access to some variables:
+                - `module`: an object that represents the current module
+                - `exports`: the name(s) exported by the module (same as `module.exports`)
+                - `require(moduleName)`: the function that loads `moduleName`
+                - `__dirname`: the absolute pathname of the directory that contains the module
+                - `__filename`: the absolute pathname of the file that contains the module
+    - **JS modules/ES6 modules**: since ES6, JavaScript supporst modules natively with `import` and `export` keywords
+        - **issues with CommonJS**: while useful in Node applications, CommonJS modules aren't suitable for the browser environment
+            - CommonJS modules are loaded *synchronously* - whenever a CommonJS module is loaded with `require`, Node will load the indicated module into memory and wait until it is finished doing so to execute any other code
+                - this is obviously an issue when trying to load modules that are stored in another server, quite likely dependent on other modules stored on other servers
+                - there are tools like RequireJS and Browserify that are workarounds to this issue
+        - **JS module syntax**: precede declarations of any values you want to export with `export`; anything that isn't explicitly exported is local to the module
+        ```javascript
+        // test1.js
+        import { fromTest2 } from "./test2";
+
+        let a = 1; // not exported
+
+        export function fromTest1() {
+          console.log("hi");
         }
         ```
-    - What part does hoisting play in the way a specific program works? (last part of the notes)
-        - after creation phase, JavaScript knows about the identifiers and their scope; during execution, doesn't care about declarations, just definitions/initialization, just looks up identifiers
-        - hoisting: determines identifiers and scope during creation phase
-  - "strict mode"
-    - What is strict mode? How does it differ from sloppy mode?
-        - optional mode in JavaScript that modifies its semantics (meaning of the code) to prevent "silent errors" that commonly happen in sloppy mode
-            - prevent silent errors
-            - optimizes code, runs faster
-            - prevents using names/syntax that might conflict with future JavaScript versions
-    - How do you enable strict mode at the global or function level?
-        - `"use strict";` pragma
-            - at the global (module) level: put it at the top of the file
-            - in a function: put it at the top of the function definition
-                - works like lexical scope
-            - automatically enabled in a class definition and in modules
-    Describe how code behaves under both strict and sloppy mode.
-    When is strict mode enabled automatically?
-    When should you use (or not use) strict mode?
-  - "Closures"
-    What is a closure?
-    What is in a closure?
-    When is a closure created?
-    - What is the relationship between closures and scope?
-        - closure uses the variables in scope at function definition to determine the variables the function will have access to during its execution
-        - 
-    What do we mean when we say that closures are defined lexically?
-    - What is partial function application?
-        - can be done with `bind`
-  - "IIFEs"
-    What are IIFEs?
-    How do you use them?
-    How do you use IIFEs to create private scopes?
-    How do you use blocks to create private scopes?
-    How do you use IIFEs to create private data?
-  - "Modules"
-    The benefits of using modules.
-    How to use and create CommonJS modules.
-    How CommonJS modules pass exported items to the importing module.
-  - "Exceptions"
-    What are exceptions?
-    Given an exception error message, identify the exception type and understand the meaning.
-    Understand the terms raise, throw, re-throw, and catch.
-    Know the syntax for the throw and try/catch statements.
-    Understand the program flow for an exception.
+        ```javascript
+        // test2.js
+        import { fromTest1 } from "./test1";
+
+        export function fromTest2() {
+          console.log("hello there");
+        }
+        ```
+        - Node doesn't directly support JS modules, but Babel can transpile ES6 modules into a form that Node understands
+- **exceptions**
+    - an **exception** is an event that occurs during program execution to indicate an anomalous or exceptional condition
+    - exceptions terminate the program by default, but can be caught/handled by the program with an **exception handler**, which JavaScript implements using `try/catch` statements
+        - the `try` block runs code that might raise an exception, and the `catch` block deals with exceptions
+    - **not all errors are exceptions** - for instance, invalid user input could result in an error that should be dealt with (using input validation/asking for input again/etc) but an exception would cause the program to terminate, so this shouldn't be an exception
+        - exceptions should be execeptional situations
+    - objects that represent exceptions, that are **thrown/raised** by JavaScript are `Error` type objects, or types that inherit from `Error` like `SyntaxError`, `TypeError`, `ReferenceError` etc
+    - **throwing exceptions**
+        - JavaScript can throw exceptions by itself internally (for example, using a variable before it's declared throws a `ReferenceError`)
+        - you can also throw exceptions yourself:
+        ```javascript
+        function throwError() {
+          throw new Error("test error"); // creates an instance of an Error object to throw
+        }
+
+        throwError(); // Error: test error
+        ```
+        ```javascript
+        // could also define a custom error type to throw
+        class NewTestError extends Error {}
+
+        function throwError() {
+          throw new NewTestError("test error");
+        }
+
+        throwError(); // NewTestError: test error
+        ```
+    - **catching exceptions**: done using `try/catch` blocks:
+    ```javascript
+    class NewTestError extends Error {}
+
+    function throwError() {
+      throw new NewTestError("test error");
+    }
+
+    try {
+      throwError();
+      console.log("no error thrown"); // never runs
+    } catch (error) {
+      if (error instanceof NewTestError) {
+        console.log("test error, ignored");
+      } else {
+        throw error;
+      }
+    }
+
+    console.log("after the error"); // runs after the NewTestError is thrown
+    ```
+    - program flow: `try` block is executed, `throwError` throws a `NewTestError`, which propagates upward through the program (similar to the program flow after a `return` statement); it's caught by the `catch` block after the `try` block, which logs `test error, ignored` since the error was a `NewTestError`
+        - the `catch` block catches only a particular type of exception; in general they shouldn't catch any type of exception (otherwise it might catch an exception being thrown by something you can't handle, like an `InternalError`)
+    - **general program flow when a program throws an exception**: the exception propagates upward through the program, stopping at each block checking for a `try` block. 
+        - if it doesn't find one, JavaScript issues an error message and terminates the program.
+        - if it does find one, then it exits the block without executing any of the remaining code and executes the `catch` block
+        - if the `catch` block re-throws the exception, then the process starts again
+        - if the `catch` block throws its own exception, then the first exception is discarded and the process begins again with the new exception
+        - if the `catch` block doesn't throw a new exception, then the program discards the first exception and execution continues after the `catch` block
+    - **when to use exceptions**: they should handle **exceptional** conditions
+        - don't use exceptions for flow control
+        - if there's a better way to handle an exception, use that instead
+        - also think about what you do when catching an exception - in general, you don't want to catch every possible exception (see above)
+            - in general, do as little as possible in addition when catching an exception, such as:
+                - ignoring the exception
+                - returning an error value like `undefined` or `null` that the calling function can detect
+                - log an error message and/or re-throw the exception
+- **garbage collection (GC)**
+    - automatic process that JavaScript uses to free up memory allocated to unused values
+        - contrast to other languages like C or C++ where memory allocation/deallocation is manually done
+    - **how it works**
+        - **reference count**: naive algorithm for GC that tracks references to values in the program, and flags values for becoming eligible for GC if their reference count drops to 0
+            - leads to problems with circular references
+            - modern browsers use more sophisticated algorithms, but pretend that JS uses reference counting
+        - **the stack and heap**: 

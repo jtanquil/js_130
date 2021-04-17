@@ -1,6 +1,6 @@
 function delegate(object, methodName, ...args) {
   return (...restOfArgs) =>
-    object[methodName].call(object, args.concat(restOfArgs));
+    object[methodName](args.concat(restOfArgs));
 }
 
 let foo = {
