@@ -174,7 +174,7 @@
     ```javascript
     // cloning an object
     let obj1 = { a: 1, b: 2 };
-    let obj2 = { ...obj };
+    let obj2 = { ...obj1 };
 
     console.log(obj2); // { a: 1, b: 2 }
     console.log(obj1 === obj2); // false
@@ -206,3 +206,13 @@
     console.log(rest); // { b: 2, d: 4 }
     ```
     - the rest element (`...rest` in both examples) must be the last item in any expression that uses rest syntax
+    - **example**: functions that take arbitrary numbers of parameters can use rest syntax to collect any other arguments into an array:
+    ```javascript
+    function test(a, b, ...otherArgs) {
+      console.log(a); // 1
+      console.log(b); // 2
+      console.log(otherArgs); // [3, 4, 5, 6]
+    }
+
+    test(1, 2, 3, 4, 5, 6);
+    ```

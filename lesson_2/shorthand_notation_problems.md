@@ -111,3 +111,8 @@ let { type, age, colors } = qux();
 console.log(type);    // cat
 console.log(age);     // 9
 console.log(colors);  // [ 'black', 'white' ]
+```
+
+8.
+
+```javascript

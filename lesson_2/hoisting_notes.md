@@ -4,6 +4,13 @@
 
 - **the `var` statement**
     - used to declare variables, like `let` and `const`
+    - variables declared with `var` can be redeclared (even in strict mode!):
+        ```javascript
+        var x = 0;
+        var x = 1;
+        var x = function() {};
+        console.log(this.x); // [Function: x], overrides
+        ```
     - **`var` vs `const`**: the `var` statment can't create constants like `const`
     - **`var` vs `let`**:
         - 1) variables declared with `var` at the top level of a program adds that variable as a property on the global object, variables declared with `let` or `const` don't:
