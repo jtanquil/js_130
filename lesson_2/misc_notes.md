@@ -156,4 +156,63 @@
         - **reference count**: naive algorithm for GC that tracks references to values in the program, and flags values for becoming eligible for GC if their reference count drops to 0
             - leads to problems with circular references
             - modern browsers use more sophisticated algorithms, but pretend that JS uses reference counting
-        - **the stack and heap**: 
+        - **the stack and heap**
+            - **idea**: most programming languages divide memory into two regions - the stack and the heap
+            - roughly speaking, JavaScript stores primitive values and references on the stack, and everything else (particularly the actual values of objects/arrays/strings that are referenced by references) on the heap
+            - the stack doesn't participate in GC, so **most primitive values don't get involved in GC**
+                - at the beginning of each function and block, JavaScript allocates memory on the stack for the variables defined in that function or block
+                - each item in the stack has fixed size, so JavaScript can calculate the necessary memory during the creation phase without knowing the actual values
+                    - JavaScript can calculate how much stack space each function/block needs during the creation phase
+                - when the block or function is done running, the allocated stack memory is automatically returned to the system
+                - **note**: **this is an oversimplification** since it doesn't account for variables that persist in memory after leaving scope because functions can access them through closure; they can be thought of as being stored on the heap, making them subject to GC
+            - values stored in the heap generally have different sizes that can't be determined in advance, so they are added to the heap when they get created
+                - since the program retains references to the values on the heap, it can't automatically allocate/deallocate heap memory like it does for stack memory, so it relies on GC to deallocate these values when needed
+            - GC occurs periodically, with modern versions of JavaScript it can't be done manually
+            - GC does not happen when a variable goes out of scope (see: closures, other sources of persistent references)
+- circular references
+  ```javascript
+  function go() {
+    let foo = {};
+    let bar = { qux : foo };
+    foo.xyz = bar;
+  }
+
+  go();
+  ```
+  - invoking `go` adds the object referenced by `foo` and the object referenced by `bar` to the heap, and adds references to them to the stack. since `foo` and `bar` reference each other through their properties, both objects have a reference count of `2` at the end of the execution of `go`
+  - exiting the `go` function deallocates the stack space allocated to `go`, so the references to `foo` and `bar` are gone, but both objects still exist (on the heap) and they reference each other via their properties, so neither object is eligible for GC and never go away until the program ends
+  ```javascript
+  function go() {
+    let foo = {};
+    let bar = { qux: foo };
+    foo.xyz = bar;
+  }
+  
+  for (let count = 0; count < 10000000; count += 1) {
+    go(); // creates 20000000 objects on the heap that can never be GCed
+  }
+  ```
+  - this illustates why, in practice, GC is not done with reference counting in modern browsers
+  - modern browsers use **mark and sweep**, another algorithm, to do GC, which solves the circular reference problem but introduces other problems
+- **side effects**:
+    - possible side effects:
+        - reassigning a non-local variable
+        - mutating the value of any object referenced by a non-local variable
+        - reading from/writing to any data entity (files, network connections, etc) that is non-local to your program
+            - in particular, any I/O: `console.log`, user input
+            - `new Date` accesses the system clock
+            - `Math.random()` accesses the random number generator
+        - raises an exception
+            - catching an exception can still produce side effects in the `catch` block
+        - calls another function with side effects
+    - more correct to talk about whether a specific function call has side effects, especially for functions that invoke a callback, but generally we will talk about whether functions have side effects when they are **used as intended**, i.e. the function is invoked in a manner that makes sense
+    - **mixing side effects and return values**
+        - generally not recommended to mix a side effect with returning a useful value (i.e. a value that has meaning to the calling code)
+        - some exceptions, like reading user input
+    - **pure functions**: functions that
+        - have no side effects
+        - given the same set of arguments, **always** return the same value during the function's lifetime
+            - the **lifetime** of a function begins when it's created, and ends when it's destroyed (i.e. the lifetime of a function that is created inside another function is within the invocation of that outer function)
+            - **idea**: nothing else in the program can influence what the function does during its lifetime; operates similar to a mathematical function
+        - we talk about pure functions in the same way we talk about functions with side effects - specific calls of functions can be pure, but we'll talk about pure functions being used as intended
+        - very important for functional programming (which is important for many JavaScript libraries like React)

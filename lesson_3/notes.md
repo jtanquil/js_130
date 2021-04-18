@@ -3,4 +3,36 @@
 - **why**: initially, focus on writing tests to prevent **regression** - events that cause previously working code to stop working after a change (a regression of your program to an earlier development state)
     - write tests so we can change things without having to manually verify that everything works
     - in the jargon of testing, we'll be learning **unit testing** but not really important right now
+        - relevant terms:
+            - **test suite**: entire set of tests that accompanies your program
+            - **test/spec**: specific situation or context that you're attempting to test
+            - **assertion/expectation**: verification step that confirms the program does what it should
 - `jest`
+    - `describe`: method that groups your tests; takes a string (optional - describes the group of tests) and a callback (function that does the actual tests)
+    - `test`: method that defines a test; takes a string (describes the test) and a callback (body of the test itself)
+    - `expect`: assertion/expectation(s) of each test - argument passed to it is the **actual value**, generally some value related to whatever code is being tested (ex/return value of a function being tested)
+        - the actual value is compared to an expected value using matcher methods like `toBe` - matcher methods take the expected value of the test as an argument
+        - these expressions don't return a boolean value, they just inform jest of the results of the test so it can treat each test as a success or failure
+    - skipping tests: replace invocations of `test` with `test.skip` or `xtest`
+    - **matchers**: many different methods that compare the actual value of a test to the expected value in a variety of ways
+        - `toBe`: fails unless the actual value === expected value
+        - `toEqual`: `toBe` that also tests for object equality; i.e. `expect({ a: 1 }).toBe({ a: 1 })` will fail, but `expect({ a: 1 }).toEqual({ a: 1 })` will succeed
+        - `toBeUndefined`: fails unless the actual value is `undefined`; same as `toBe(undefined)`
+        - `toThrow`: `expect` takes a callback that is invoked, test fails unless the callback throws an error
+            - `toThrow` takes an optional argument to test the type of error (`TypeError`, `ReferenceError` etc)
+            - if `expect` takes an expression whose evaluation throws an error then this code can't even run, so the test must be wrapped in a callback that is passed to `expect`
+        - `toBeNull`: fails unless the actual value is `null`; same as `toBe(null)`
+        - `toBeTruthy`: fails unless the actual value is truthy
+        - `toContain`: fails unless the given array includes a value; also finds substrings in strings (generally works with arraylikes)
+        - more tests in the [documentation](https://jestjs.io/docs/expect)
+- SEAT
+    - **S**et up necessary objects, **E**xecute the code against the object we're testing, **A**ssert the results of execution, **T**ear down and clean up any lingering artifacts
+        - **E** and **A** are done using the `describe`/`test`/`expect` pattern described earlier
+        - **S** can be expedited by moving all setup code in each `test` to an invocation of `beforeEach` at the top of the group of tests
+            - `beforeEach`: takes a callback that is invoked before every `test` in the group; typically used to initialize objects for testing
+            - this is preferrable to initializing objects at the top of `describe` since each `test` could mutate those objects
+        - **T**: `afterEach` callback is similar to `beforeEach` except the callback it's passed will be invoked after every `test`, typically used for cleanup
+- code coverage
+    - how much of our program code is tested by a test suite; gives a rough idea of how comprehensive our test suite is
+    - `jest --coverage [test]` will print a table that displays the code coverage of each file by the test suite
+    - the `coverage/lcov-report/index.html` file will show a more detailed table and reports of which lines of code are executed by tests
