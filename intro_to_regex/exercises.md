@@ -79,3 +79,61 @@
 11. `/^((\d+,){2}|(\d+,){5,})\d+$/`
 
 12. `/<h1>.*?<\/h1>/`
+
+### Using regex in JavaScript ###
+
+1. 
+
+```javascript
+function isUrl(string) {
+  return !!string.match(/^https?:\/\/\S+\.\S+$/);
+}
+```
+
+2.
+
+```javascript
+function fields(string) {
+  return string.split(/[, \t]+/);
+}
+```
+
+3.
+
+```javascript
+function mysteryMath(string) {
+  return string.replace(/[+\-*/]/, '?');
+}
+```
+
+4.
+
+```javascript
+function mysteriousMath(string) {
+  return string.replace(/[+\-*/]/g, '?');
+}
+```
+
+5.
+
+```javascript
+function danish(string) {
+  return string.replace(/\b(apple|blueberry|cherry)\b/, 'danish');
+}
+```
+
+6. 
+
+```javascript
+function formatDate(date) {
+  return date.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1');
+}
+```
+
+7.
+
+```javascript
+function formatDate(date) {
+  return date.replace(/(\d{4})(.|-)(\d{2})\2(\d{2})/, '$4.$3.$1');
+}
+```

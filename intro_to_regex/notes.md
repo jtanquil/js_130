@@ -50,3 +50,33 @@
     - **greediness vs laziness**: quantifiers are **greedy** by default - they match the longest possible string
         - ex/ `/a[abc]*c/` matches once with `xabcabcy`, matching with `abcabc`, as opposed to matching twice with `abc` and `abc`
         - sommetimes, you want a **lazy** match, matching the fewest possible characters; to do this, add `?` after the main quantifier. (`/a[abc]*?c/` will match `abc` twice in `xabcabcy`)
+- `String.prototype.match`: can take a regex instead of a string
+    - returns a truthy value that indicates whether a match occurred, and what substrings matched
+        - from [`match` documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match): returns an array, contents depend on the presence of a global `g` flag
+            - without `g`: returns the matched string, along with some other properties defined on the array that describe the matched string and the capture groups (see documentation)
+            - with `g`: returns all the matched strings
+            ```javascript
+            console.log("hello".match(/l/)); // ["l", index: 2, input: 'hello', groups: undefined]
+            console.log("hello".match(/l/g)); // ["l", "l"]
+            ```
+- `String.prototype.split`: can take a regex instead of a string
+    - the string will be split on any substrings that match the regex, instead of just a single character
+    - useful for handling arbitrary whitespace/tabs/etc that separate data (as opposed to csv)
+    ```javascript
+    console.log("hi       there  \t        , hello".split(/[, \t]+/)); // ["hi", "there", "hello"]
+    ```
+- capture groups
+    - the `()` metacharacters, in addition to grouping, also provide **capture** and **non-capture** groups
+    - **idea**: capture groups capture characters that match part of a regex, and allow you to reuse those matches later on in the regex, and when constructing new values based on the matched string
+    ```javascript
+    /(['"]).+?\1/
+    ```
+    - here, whatever is matched by the pattern in the parentheses, `['"]` (double or single quote), is captured as part of a capture group, and whatever that matched string is used at the end of the regex with `\1`, a **backreference** to the first capture group in the regex
+        - the order of capture groups is determined left-to-right
+        - also possible to name capture groups for easier referencing (see documentation)
+- `String.prototype.replace`: takes a regex, and a replacement string to replace anything matched by the regex
+    - the replacement string can backreference capture groups:
+    ```javascript
+    console.log("hello".replace(/(ell)/, '$1 $1 $1')); // hell ell ello
+    ```
+    - here, the `$1` in the replacement string backreferences the capture group `(ell)` in the regex
