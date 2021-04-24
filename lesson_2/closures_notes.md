@@ -2,7 +2,7 @@
 
 - **definition**: a **closure** is the combination of a function and the lexical environment in which the function was defined
   - it is a function combined with all of the variables in its lexical scope, including function and class names
-- **purpose**: closures let a function access a vaariable that was in scope when the function was defined, even when that variable is no longer in scope
+- **purpose**: closures let a function access a variable that was in scope when the function was defined, even when that variable is no longer in scope
 - **relationship to scope**: the variables that a function has access to via a closure are determined by the scope in which the function was defined, and the variables in scope during a function's execution depend on the closure formed by the function's definition 
 - **closures are a lexical concept**: a closure is determined by **where a function is defined in the code**
   - similar to how scope is lexical - the variables that are in any given scope is determined by how the code is written

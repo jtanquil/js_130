@@ -76,7 +76,7 @@
         let a = 1;
         ```
         - **a note about initialization**: "initialization" occurs when JavaScript executes the variable declaration statement, not when it creates the variable; hence `cannot access before initialization` in the error message in the 2nd case
-    - **with `var`**: `var` declarations are hoisted to the top of the function in which they are defined, and are set to `undefined` - they aren't in the Temporal Dead Zone as variables declared with `let` or `const` are after hoisting
+    - **with `var`**: `var` declarations are hoisted to the top of the function in which they are defined, and are immediately set to `undefined` - they aren't in the Temporal Dead Zone as variables declared with `let` or `const` are after hoisting
         ```javascript
         // attempting to access a variable that is never declared in code
         console.log(a); // ReferenceError: a is not defined
