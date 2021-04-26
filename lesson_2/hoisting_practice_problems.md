@@ -3,6 +3,8 @@
 1. This code will log `Bye` to the console. The variable `foo` declared with `var` and the function declaration `foo` both have function scope, but functions are hoisted above variables when they occupy the same scope. The code is therefore equivalent to
 
 ```javascript
+var foo;
+
 function foo() {
   console.log("Hello");
 }
