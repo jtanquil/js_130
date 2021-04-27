@@ -33,8 +33,6 @@
           console.log(testVar);
         };
 
-        let testVar = "hello";
-
         function setTestVar(newTestVar) {
           testVar = newTestVar;
         }

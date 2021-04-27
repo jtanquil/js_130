@@ -16,6 +16,6 @@ let baz = {
 
 baz.qux();   // logs 'hello test';
 
-foo.bar = function() { console.log('changed'); };
+foo.bar = function() { console.log(`${this.name} changed`); };
 
 baz.qux();          // logs 'changed'
